@@ -17,4 +17,6 @@ $app->get('/', function () use ($app) {
 $app->get('getTimezone/{amoId}/{card}', [
     'as' => 'getTimezone', 'uses' => 'TimezoneController@getTimezone'
 ]);
-
+$app->get('getTimezonePhone/{phone}', [
+    'as' => 'getTimezonePhone', 'uses' => 'TimezoneController@getTimezonePhone'
+]);

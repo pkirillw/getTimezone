@@ -15,6 +15,7 @@ timeZonesLibrary.api = function (url, callbackSuccess, callbackError) {
 }
 
 window.timeZoneWidget.render.push(function (widget) {
+    var area = widget.system().area;
     var usersAvaible = [1159269, 1517371];
 
     //if (usersAvaible.indexOf(AMOCRM.data.current_card.user.id) == -1) {
@@ -38,6 +39,12 @@ window.timeZoneWidget.render.push(function (widget) {
         '}' +
         '</style>';
     $('head').append(stylePlus);
+    if (area == 'lcard') {
+        $(document).on('ntrt:provider_tab:render', function () {
+            console.log('ntrt:provider_tab:render');
+            $('[name="ntCFV[1]"]').parent().after('<span class="js-get-timezone">МСК+?</span>');
+        });
+    }
     $('[name="CFV[1970926]"]').parent().after('<span class="js-get-timezone">МСК+?</span>');
     console.log('Click handle on!');
     $(document).on('click', '.js-get-timezone', function () {

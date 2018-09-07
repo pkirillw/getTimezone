@@ -21,14 +21,12 @@ class TimezoneController extends Controller
 
     public function __construct()
     {
-        $this->url = 'https://smsc.ru/sys/info.php?get_operator=1&login='.$this->smscLogin.'&psw='.$this->smscPass.'&fmt=3&phone=';
+        $this->url = 'https://smsc.ru/sys/info.php?get_operator=1&login=' . $this->smscLogin . '&psw=' . $this->smscPass . '&fmt=3&phone=';
 
     }
 
     public function getTimezone($amoId, $card)
     {
-
-
         $user = array(
             'USER_LOGIN' => $this->amoLogin, #Ваш логин (электронная почта)
             'USER_HASH' => $this->amoHash #Хэш для доступа к API (смотрите в профиле пользователя)
@@ -130,7 +128,6 @@ class TimezoneController extends Controller
             return response()->json(['error' => 'Неправильный формат телефона']);
         }
         $gmt = $response->tz;
-
         $contacts['update'] = [
             [
                 'id' => $amoId,
@@ -184,6 +181,27 @@ class TimezoneController extends Controller
             die('Ошибка: ' . $E->getMessage() . PHP_EOL . 'Код ошибки: ' . $E->getCode());
         }
 
+
+        return response()->json(['data' => $this->solveTimezone($gmtMoscow, $gmt)]);
+    }
+
+    public function getTimezonePhone($phone)
+    {
+        $gmtMoscow = '3';
+        $this->url = 'https://smsc.ru/sys/info.php?get_operator=1&login=' . $this->smscLogin . '&psw=' . $this->smscPass . '&fmt=3&phone=';
+        $client = new Client();
+        $res = $client->request('GET', $this->url . $phone);
+        $response = $res->getBody();
+        if (empty($response)) {
+            return response()->json(['error' => 'Ошибка взаимодействия с API']);
+        }
+        //echo $phone;
+        $response = json_decode($response);
+        //dd($response);
+        if (isset($response->status) && ($response->status == 'error')) {
+            return response()->json(['error' => 'Неправильный формат телефона']);
+        }
+        $gmt = $response->tz;
         return response()->json(['data' => $this->solveTimezone($gmtMoscow, $gmt)]);
     }
 
